@@ -39,8 +39,9 @@
 import glob
 import io
 import os
+import re
 import secrets
-from asyncio.exceptions import TimeoutError as AsyncTimeout
+import asyncio
 
 try:
     import cv2
@@ -57,11 +58,7 @@ except ImportError:
     WebShot = None
 
 from telethon.errors.rpcerrorlist import MessageTooLongError, YouBlockedUserError
-from telethon.tl.types import (
-    ChannelParticipantAdmin,
-    ChannelParticipantsBots,
-    DocumentAttributeVideo,
-)
+from telethon.tl import types
 
 from pyUltroid.fns.tools import metadata, translate
 
@@ -76,6 +73,7 @@ from . import (
     download_file,
     eor,
     get_string,
+    ultroid_bot,
 )
 from . import humanbytes as hb
 from . import inline_mention, is_url_ok, json_parser, mediainfo, ultroid_cmd
@@ -146,9 +144,9 @@ async def _(ult):
     try:
         async for x in ult.client.iter_participants(
             chat,
-            filter=ChannelParticipantsBots,
+            filter=types.ChannelParticipantsBots,
         ):
-            if isinstance(x.participant, ChannelParticipantAdmin):
+            if isinstance(x.participant, types.ChannelParticipantAdmin):
                 mentions += f"\n⚜️ {inline_mention(x)} `{x.id}`"
             else:
                 mentions += f"\n• {inline_mention(x)} `{x.id}`"
@@ -206,7 +204,7 @@ async def _(e):
             thumb=thumb,
             reply_to=reply,
             attributes=[
-                DocumentAttributeVideo(
+                types.DocumentAttributeVideo(
                     duration=min(data["duration"], 60),
                     w=512,
                     h=512,
