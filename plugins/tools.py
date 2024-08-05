@@ -57,10 +57,11 @@ try:
 except ImportError:
     WebShot = None
 
+from deep_translator import GoogleTranslator
 from telethon.errors.rpcerrorlist import MessageTooLongError, YouBlockedUserError
 from telethon.tl import types
 
-from pyUltroid.fns.tools import metadata, translate
+from pyUltroid.fns.tools import metadata
 
 from . import (
     HNDLR,
@@ -96,9 +97,10 @@ async def _(event):
         )
     lan = input or "en"
     try:
-        tt = translate(text, lang_tgt=lan)
+        tt=GoogleTranslator(source='auto', target=lan).translate(text)
         output_str = f"**TRANSLATED** to {lan}\n{tt}"
         await event.eor(output_str)
+
     except Exception as exc:
         LOGS.exception(exc)
         await event.eor(str(exc), time=5)
