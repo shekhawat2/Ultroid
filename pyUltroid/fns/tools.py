@@ -474,13 +474,27 @@ async def get_google_images(query):
 # Thanks https://t.me/ImSafone for ChatBotApi
 
 
+from openai import OpenAI
+from os import getenv
+
 async def get_chatbot_reply(message):
-    chatbot_base = "https://api.safone.dev/chatbot?query={}"
-    req_link = chatbot_base.format(
-        message,
+    # gets API Key from environment variable OPENAI_API_KEY
+    client = OpenAI(
+      base_url="https://openrouter.ai/api/v1",
+      api_key="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",
+    )
+
+    completion = client.chat.completions.create(
+      model="undi95/toppy-m-7b:free",
+      messages=[
+        {
+          "role": "user",
+          "content": message,
+        },
+      ],
     )
     try:
-        return (await async_searcher(req_link, re_json=True)).get("response")
+      return(completion.choices[0].message.content)
     except Exception:
         LOGS.info(f"**ERROR:**`{format_exc()}`")
 
