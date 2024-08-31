@@ -485,7 +485,7 @@ async def get_chatbot_reply(message):
     )
 
     completion = client.chat.completions.create(
-      model="undi95/toppy-m-7b:free",
+      model="openai/gpt-4o-mini",
       messages=[
         {
           "role": "user",
