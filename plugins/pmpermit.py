@@ -806,35 +806,23 @@ async def in_pm_ans(event):
     elif ext in ["mp4", "mkv", "gif"]:
         mime_type = "video/mp4"
         _type = "gif"
-    else:
-        try:
-            res = resolve_bot_file_id(PMPIC)
-        except ValueError:
-            pass
-        if res:
-            res = [
-                await event.builder.document(
-                    res,
-                    title="Inline PmPermit",
-                    description="~ @TeamUltroid",
-                    text=msg_,
-                    buttons=buttons,
-                    link_preview=False,
-                )
-            ]
-        else:
-            _type = "article"
-            include_media = False
-    if not res:
-        if include_media:
-            cont = types.InputWebDocument(PMPIC, 0, mime_type, [])
+    if _type in ["photo", "video", "gif"]:
         res = [
-            event.builder.article(
+            await event.builder.document(
+                title="Inline PmPermit",
+                file=PMPIC,
+                description="~ @TeamUltroid",
+                text=msg_,
+                buttons=buttons,
+                link_preview=False,
+            )
+        ]
+    else:
+        res = [
+            await event.builder.article(
                 title="Inline PMPermit.",
-                type=_type,
                 text=msg_,
                 description="@TeamUltroid",
-                include_media=include_media,
                 buttons=buttons,
                 thumb=cont,
                 content=cont,
