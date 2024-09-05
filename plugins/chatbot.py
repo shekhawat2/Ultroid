@@ -13,18 +13,26 @@ __doc__ = get_help("help_chatbot")
 from pyUltroid.fns.tools import get_chatbot_reply
 
 from . import LOGS, eod, get_string, inline_mention, udB, ultroid_cmd
-
+import time
 
 @ultroid_cmd(pattern="repai")
 async def im_lonely_chat_with_me(event):
     if event.reply_to:
-        message = (await event.get_reply_message()).message
+        try:
+            message = (await event.get_reply_message()).message + event.text.split(" ", 1)[1]
+        except:
+            message = (await event.get_reply_message()).message
     else:
         try:
             message = event.text.split(" ", 1)[1]
         except IndexError:
             return await eod(event, get_string("tban_1"), time=10)
     reply_ = await get_chatbot_reply(message=message)
+    letters=''
+    for letter in "Typing":
+        letters= letters + letter
+        await event.eor(letters)
+        time.sleep(0.5)
     await event.eor(reply_)
 
 
